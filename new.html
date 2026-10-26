@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>우리 학교 링크 만들기 · 중2 수학 아케이드</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="선생님이 우리 학교 수업용 게임 링크를 만드는 페이지입니다. 회원 가입이나 개인정보 입력이 없습니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <span class="ribbon">MATH ARCADE</span>
+      <h1 class="otl">우리 학교 링크 만들기</h1>
+      <p>중2 수학 아케이드 · 로그인 없이 10초면 학교 랭킹 링크가 생겨요</p>
+    </div>
+    <nav><a href="./">게임 미리 해 보기</a></nav>
+  </header>
+
+  <div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tabNew" aria-selected="true" aria-controls="pNew">새 링크 만들기</button>
+      <button class="tab" role="tab" id="tabMy" aria-selected="false" aria-controls="pMy">우리 학교 관리하기</button>
+    </div>
+
+    <!-- 새 링크 만들기 -->
+    <section class="panel" id="pNew" role="tabpanel" aria-labelledby="tabNew">
+      <form id="fNew" class="grid" style="display:grid;gap:10px">
+        <label class="fld" for="schoolIn">학교 이름 (학생 화면과 랭킹에 보여요)
+          <input id="schoolIn" maxlength="40" placeholder="예) 한빛중학교 2학년" autocomplete="off">
+        </label>
+        <div class="row"><button class="btn big yel" id="bNew" type="submit">링크 만들기</button><span class="hint">같은 인터넷에서는 10분에 3개, 하루 10개까지 만들 수 있어요.</span></div>
+        <div class="msg bad" id="newErr" hidden></div>
+      </form>
+
+      <div id="made" hidden style="display:grid;gap:14px">
+        <div class="msg ok">링크가 만들어졌어요! 아래 <b>관리 코드</b>는 지금 꼭 저장해 두세요. 다른 기기에서는 다시 볼 수 없어요.</div>
+        <div class="result">
+          <div class="qrbox"><canvas id="qr" aria-label="학생 접속 QR 코드"></canvas><span class="hint">학생 접속 QR</span></div>
+          <div class="kv">
+            <div><div class="k">학교</div><div class="schoolname" id="mName"></div></div>
+            <div><div class="k">학생 접속 주소</div><div class="url" id="mUrl"></div>
+              <div class="row" style="margin-top:8px"><button class="btn sm" id="cUrl">주소 복사</button><a class="btn sm" id="oUrl" target="_blank" rel="noopener" style="text-decoration:none">새 창에서 열어 보기</a></div></div>
+            <div><div class="k">관리 코드 (이름 바꾸기·기록 초기화·삭제에 필요해요)</div><span class="code" id="mManage"></span>
+              <div class="row" style="margin-top:8px"><button class="btn sm" id="cManage">관리 코드 복사</button><span class="hint">학교 코드 <b class="mono" id="mCode"></b></span></div></div>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn yel" id="dMemo">관리 정보 메모 저장</button>
+          <button class="btn" id="dQR">QR 이미지 저장</button>
+          <button class="btn" id="dPoster">안내문 이미지 저장</button>
+        </div>
+        <p class="hint">안내문 이미지(QR + 주소 + 학교 이름)를 학생들에게 보내거나 칠판 화면에 띄우면 돼요.</p>
+      </div>
+
+      <div id="mine" hidden style="display:grid;gap:8px">
+        <h3>이 기기에서 만든 링크</h3>
+        <div id="mineList" style="display:grid;gap:6px"></div>
+        <p class="hint">이 목록은 이 브라우저에만 저장돼요. 브라우저 기록을 지우면 사라지니 메모도 꼭 따로 남겨 두세요.</p>
+      </div>
+    </section>
+
+    <!-- 우리 학교 관리하기 -->
+    <section class="panel" id="pMy" role="tabpanel" aria-labelledby="tabMy" hidden>
+      <form id="fMy" style="display:grid;gap:10px">
+        <div class="grid2">
+          <label class="fld" for="myCode">학생 접속 주소 또는 학교 코드
+            <input id="myCode" placeholder="예) https://…/?s=ab3k7q 또는 ab3k7q" autocomplete="off">
+          </label>
+          <label class="fld" for="myManage">관리 코드
+            <input id="myManage" placeholder="예) JCUV-BJBY" autocomplete="off" style="text-transform:uppercase">
+          </label>
+        </div>
+        <div class="row"><button class="btn big yel" type="submit" id="bMy">불러오기</button></div>
+        <div class="msg bad" id="myErr" hidden></div>
+      </form>
+
+      <div id="myBox" hidden style="display:grid;gap:14px">
+        <div class="result">
+          <div class="qrbox"><canvas id="myQr" aria-label="학생 접속 QR 코드"></canvas><span class="hint">학생 접속 QR</span></div>
+          <div class="kv">
+            <div><div class="k">학교</div><div class="schoolname" id="myName"></div></div>
+            <div><div class="k">학생 접속 주소</div><div class="url" id="myUrl"></div>
+              <div class="row" style="margin-top:8px"><button class="btn sm" id="myCUrl">주소 복사</button><button class="btn sm" id="myPoster">안내문 이미지 저장</button></div></div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">참여한 학생</div><div class="v" id="myStudents">0</div></div>
+          <div class="stat"><div class="k">저장된 기록</div><div class="v" id="myRecords">0</div></div>
+          <div class="stat"><div class="k">만든 날</div><div class="v" style="font-size:16px" id="myCreated">-</div></div>
+          <div class="stat"><div class="k">최근 활동</div><div class="v" style="font-size:16px" id="myActive">-</div></div>
+        </div>
+
+        <div class="panel" style="box-shadow:none;border-width:2px">
+          <h3>학교 이름 바꾸기</h3>
+          <div class="row"><input id="newName" maxlength="40" placeholder="새 학교 이름"><button class="btn" id="bRename">바꾸기</button></div>
+        </div>
+        <div class="panel" style="box-shadow:none;border-width:2px">
+          <h3>기록 모두 초기화 (새 학기용)</h3>
+          <p class="hint">랭킹 기록만 모두 지워요. 학생 링크와 관리 코드는 그대로 쓸 수 있어요.</p>
+          <div class="row"><button class="btn" id="bReset">기록 모두 초기화</button></div>
+        </div>
+        <div class="panel" style="box-shadow:none;border-width:2px">
+          <h3>학교 링크 삭제</h3>
+          <p class="hint">링크와 모든 기록이 사라지고 되돌릴 수 없어요. 확인을 위해 학교 이름을 그대로 입력해 주세요.</p>
+          <div class="row"><input id="delName" placeholder="학교 이름 입력"><button class="btn red" id="bDelete">삭제</button></div>
+        </div>
+        <div class="msg" id="myMsg" hidden></div>
+      </div>
+    </section>
+  </div>
+
+  <footer>이 사이트는 중학교 수학 수업용 무료 게임이에요. 회원 가입·비밀번호·개인정보를 받지 않아요. 학생들에게는 실제 이름 대신 반·번호와 별명을 쓰게 해 주세요.<br>점수와 랭킹은 학교마다 따로 저장돼요. 관리 코드를 잃어버렸다면 사이트 관리자에게 새 관리 코드를 요청하세요.</footer>
+</div>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script src="qr.js"></script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const MINE='m2a_mine';
+const getMine=()=>{try{return JSON.parse(localStorage.getItem(MINE)||'[]');}catch(e){return [];}};
+const setMine=v=>{try{localStorage.setItem(MINE,JSON.stringify(v.slice(0,20)));}catch(e){}};
+
+/* 탭 */
+function tab(which){ const n=which==='new'; $('#tabNew').setAttribute('aria-selected',n); $('#tabMy').setAttribute('aria-selected',!n); $('#pNew').hidden=!n; $('#pMy').hidden=n; }
+$('#tabNew').onclick=()=>tab('new'); $('#tabMy').onclick=()=>tab('my');
+if(location.hash==='#manage') tab('my');
+
+function busy(btn,on,text){ if(on){ btn.dataset.t=btn.textContent; btn.textContent=text||'잠시만요…'; btn.disabled=true; } else { btn.textContent=btn.dataset.t||btn.textContent; btn.disabled=false; } }
+function showMsg(el,text,kind){ el.className='msg '+(kind||'bad'); el.textContent=text; el.hidden=!text; }
+
+/* ---------- 새 링크 만들기 ---------- */
+let made=null;
+$('#fNew').addEventListener('submit',e=>{ e.preventDefault();
+  const name=$('#schoolIn').value.trim(); const btn=$('#bNew');
+  if(name.length<2){ showMsg($('#newErr'),'학교 이름을 2글자 이상 써 주세요.'); $('#schoolIn').focus(); return; }
+  showMsg($('#newErr'),''); busy(btn,true,'만드는 중…');
+  M2A.rpc('public_create',{p_name:name}).then(j=>{
+    busy(btn,false);
+    if(!j||!j.ok){ showMsg($('#newErr'),(j&&j.error)||'링크를 만들지 못했어요.'); return; }
+    made={code:j.code,name:j.name,manage:j.manage,url:M2A.studentUrl(j.code),at:new Date().toISOString()};
+    const m=getMine().filter(x=>x.code!==made.code); m.unshift(made); setMine(m);
+    showMade(made); renderMine(); $('#schoolIn').value='';
+  }).catch(err=>{ busy(btn,false); showMsg($('#newErr'),err.message); });
+});
+function showMade(m){
+  made=m; $('#made').hidden=false; $('#mName').textContent=m.name; $('#mUrl').textContent=m.url; $('#oUrl').href=m.url;
+  $('#mManage').textContent=m.manage; $('#mCode').textContent=m.code; drawQR($('#qr'),m.url,360);
+  $('#made').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('#cUrl').onclick=e=>M2A.copyText(made.url,e.currentTarget);
+$('#cManage').onclick=e=>M2A.copyText(made.manage,e.currentTarget);
+const memo=m=>`[중2 수학 아케이드 · 학교 링크 관리 정보]\n\n학교: ${m.name}\n학생 접속 주소: ${m.url}\n학교 코드: ${m.code}\n관리 코드: ${m.manage}\n\n관리 페이지: ${location.origin+location.pathname}#manage\n· 관리 코드는 이름 바꾸기, 기록 초기화, 삭제에 필요해요.\n· 관리 코드는 다시 볼 수 없으니 이 메모를 잘 보관하세요.\n`;
+$('#dMemo').onclick=()=>M2A.downloadText(memo(made),`${made.name}_관리정보.txt`);
+$('#dQR').onclick=()=>{ const c=document.createElement('canvas'); drawQR(c,made.url,800); M2A.downloadCanvas(c,`${made.name}_QR.png`); };
+$('#dPoster').onclick=()=>posterOf(made.name,made.url);
+function posterOf(name,url){ const go=()=>M2A.downloadCanvas(M2A.makePoster(name,url),`${name}_안내문.png`); if(document.fonts&&document.fonts.load){ Promise.all([document.fonts.load('40px "Black Han Sans"'),document.fonts.load('40px "Jua"')]).then(go,go); } else go(); }
+
+function renderMine(){ const m=getMine(); $('#mine').hidden=!m.length;
+  $('#mineList').innerHTML=m.map((x,i)=>`<div class="row" style="justify-content:space-between;border:2px solid var(--ink);border-radius:12px;padding:8px 10px;background:var(--cream)"><span><b>${M2A.esc(x.name)}</b> <span class="hint mono">${M2A.esc(x.code)}</span></span><button class="btn sm" data-i="${i}">다시 보기</button></div>`).join('');
+  $('#mineList').querySelectorAll('button').forEach(b=>b.onclick=()=>showMade(getMine()[+b.dataset.i])); }
+renderMine();
+
+/* ---------- 우리 학교 관리하기 ---------- */
+let cur=null;
+function creds(){ return {p_school:M2A.pickCode($('#myCode').value),p_manage:$('#myManage').value.trim()}; }
+$('#fMy').addEventListener('submit',e=>{ e.preventDefault(); load(true); });
+function load(scroll){
+  const c=creds(); if(!c.p_school||!c.p_manage){ showMsg($('#myErr'),'학교 주소(또는 코드)와 관리 코드를 모두 넣어 주세요.'); return; }
+  const btn=$('#bMy'); busy(btn,true,'불러오는 중…'); showMsg($('#myErr'),'');
+  return M2A.rpc('my_info',c).then(j=>{ busy(btn,false);
+    if(!j||!j.ok){ $('#myBox').hidden=true; showMsg($('#myErr'),(j&&j.error)||'불러오지 못했어요.'); return; }
+    cur=j; const url=M2A.studentUrl(j.code); $('#myBox').hidden=false;
+    $('#myName').textContent=j.name; $('#myUrl').textContent=url; drawQR($('#myQr'),url,360);
+    $('#myStudents').textContent=j.students; $('#myRecords').textContent=j.records;
+    $('#myCreated').textContent=M2A.fmtDate(j.created_at); $('#myActive').textContent=j.last_active?M2A.fmtDate(j.last_active):'아직 없음';
+    if(scroll) $('#myBox').scrollIntoView({behavior:'smooth',block:'start'});
+  }).catch(err=>{ busy(btn,false); showMsg($('#myErr'),err.message); });
+}
+$('#myCUrl').onclick=e=>M2A.copyText(M2A.studentUrl(cur.code),e.currentTarget);
+$('#myPoster').onclick=()=>posterOf(cur.name,M2A.studentUrl(cur.code));
+$('#bRename').onclick=()=>{ const v=$('#newName').value.trim(); if(v.length<2){ showMsg($('#myMsg'),'새 학교 이름을 2글자 이상 써 주세요.'); return; }
+  const b=$('#bRename'); busy(b,true); M2A.rpc('my_rename',Object.assign(creds(),{p_name:v})).then(j=>{ busy(b,false);
+    if(!j.ok){ showMsg($('#myMsg'),j.error); return; } showMsg($('#myMsg'),`학교 이름을 "${j.name}"(으)로 바꿨어요.`,'ok'); $('#newName').value=''; load(); }).catch(err=>{ busy(b,false); showMsg($('#myMsg'),err.message); }); };
+$('#bReset').onclick=()=>{ const b=$('#bReset');
+  if(!b.dataset.sure){ b.dataset.sure='1'; b.classList.add('sure'); b.textContent='정말 모든 기록을 지울까요? 한 번 더 누르세요'; setTimeout(()=>{ if(b.dataset.sure){ delete b.dataset.sure; b.classList.remove('sure'); b.textContent='기록 모두 초기화'; } },5000); return; }
+  delete b.dataset.sure; b.classList.remove('sure'); busy(b,true,'지우는 중…');
+  M2A.rpc('my_reset',creds()).then(j=>{ b.disabled=false; b.textContent='기록 모두 초기화'; if(!j.ok){ showMsg($('#myMsg'),j.error); return; } showMsg($('#myMsg'),`기록 ${j.deleted}개를 지웠어요. 링크는 그대로 쓸 수 있어요.`,'ok'); load(); })
+    .catch(err=>{ b.disabled=false; b.textContent='기록 모두 초기화'; showMsg($('#myMsg'),err.message); }); };
+$('#bDelete').onclick=()=>{ if(!cur) return; if($('#delName').value.trim()!==cur.name){ showMsg($('#myMsg'),`학교 이름 "${cur.name}"을(를) 똑같이 입력해야 삭제할 수 있어요.`); return; }
+  const b=$('#bDelete'); busy(b,true,'삭제하는 중…'); const code=cur.code;
+  M2A.rpc('my_delete',creds()).then(j=>{ busy(b,false); if(!j.ok){ showMsg($('#myMsg'),j.error); return; }
+    setMine(getMine().filter(x=>x.code!==code)); renderMine(); $('#myBox').hidden=true; cur=null; $('#delName').value='';
+    showMsg($('#myErr'),'학교 링크와 기록을 모두 삭제했어요.','ok'); }).catch(err=>{ busy(b,false); showMsg($('#myMsg'),err.message); }); };
+})();
+</script>
+</body>
+</html>
